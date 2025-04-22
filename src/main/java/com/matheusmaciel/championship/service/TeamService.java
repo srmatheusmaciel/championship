@@ -1,7 +1,10 @@
 package com.matheusmaciel.championship.service;
 
+import com.matheusmaciel.championship.dto.TeamDTO;
 import com.matheusmaciel.championship.entity.Team;
+import com.matheusmaciel.championship.exception.TeamNotFoundException;
 import com.matheusmaciel.championship.repository.TeamRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,32 +21,41 @@ public class TeamService {
     }
 
 
-    public void registerTeam(Team team) {
-        repository.save(team);
+    public TeamDTO registerTeam(TeamDTO teamDTO) {
+        Team teamEntity = teamDTO.toEntity();
+        teamEntity = repository.save(teamEntity);
+        return TeamDTO.fromEntity(teamEntity);
     }
 
-    public List<Team> teamList() {
-        return repository.findAll();
+
+    public List<TeamDTO> teamList() {
+        return repository.findAll().stream().map(TeamDTO::fromEntity).toList();
     }
 
-    public Team teamById(Integer id) {
-        return repository.findById(id).get();
-    }
-
-    public Team updateTeam(Integer id, Team updatedTeam) {
+    public TeamDTO teamById(Integer id) {
         Team team = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
-
-        team.setName(updatedTeam.getName());
-        team.setCode(updatedTeam.getCode());
-        team.setState(updatedTeam.getState());
-
-        return repository.save(team);
+                .orElseThrow(() -> new TeamNotFoundException(id));
+        return TeamDTO.fromEntity(team);
     }
+
+
+    public TeamDTO updateTeam(Integer id, TeamDTO updatedTeamDTO) {
+        Team team = repository.findById(id)
+                .orElseThrow(() -> new TeamNotFoundException(id));
+
+        team.setName(updatedTeamDTO.getName());
+        team.setCode(updatedTeamDTO.getCode());
+        team.setState(updatedTeamDTO.getState());
+        team.setStadium(updatedTeamDTO.getStadium());
+
+        Team updatedTeam = repository.save(team);
+        return TeamDTO.fromEntity(updatedTeam);
+    }
+
 
     public void deleteTeam(Integer id) {
         Team team = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+                .orElseThrow(() -> new TeamNotFoundException(id));
 
         repository.delete(team);
     }
