@@ -1,7 +1,10 @@
 package com.matheusmaciel.championship.rest;
 
-import com.matheusmaciel.championship.entity.Team;
+import com.matheusmaciel.championship.dto.TeamDTO;
 import com.matheusmaciel.championship.service.TeamService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,40 +14,60 @@ import java.util.List;
 @RequestMapping("/teams")
 public class TeamController {
 
-    private TeamService service;
+    private final TeamService service;
 
     public TeamController(TeamService service) {
         this.service = service;
     }
 
+    @Operation(
+            summary = "Get a team by ID",
+            description = "Returns the details of a specific team based on its ID"
+    )
     @GetMapping
-    public ResponseEntity<List<Team>> getTeams(){
+    public ResponseEntity<List<TeamDTO>> getTeams(){
         if(service.teamList().isEmpty()){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(service.teamList());
     }
 
+    @Operation(
+            summary = "Get a team by ID",
+            description = "Retrieves the details of a specific team using its unique identifier."
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<Team> getTeamById(@PathVariable Integer id){
+    public ResponseEntity<TeamDTO> getTeamById(@PathVariable Integer id){
         if(service.teamById(id) == null){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(service.teamById(id));
     }
 
+    @Operation(
+            summary = "Create a new team",
+            description = "Adds a new team to the database with name, code, and state."
+    )
     @PostMapping("/register")
-    public ResponseEntity<Team> registerTeam(@RequestBody Team team){
-        service.registerTeam(team);
-        return ResponseEntity.ok(team);
+    public ResponseEntity<String> registerTeam(@Valid @RequestBody TeamDTO teamDTO){
+        service.registerTeam(teamDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Team registered successfully");
     }
 
+    @Operation(
+            summary = "Update a team",
+            description = "Updates the information of an existing team using its ID."
+    )
     @PutMapping("/update/{id}")
-    public ResponseEntity<Team> updateTeam(@PathVariable Integer id, @RequestBody Team team){
-        Team updatedTeam = service.updateTeam(id, team);
+    public ResponseEntity<TeamDTO> updateTeam(@PathVariable Integer id, @RequestBody TeamDTO teamDTO){
+        TeamDTO updatedTeam = service.updateTeam(id, teamDTO);
         return ResponseEntity.ok(updatedTeam);
     }
 
+    @Operation(
+            summary = "Delete a team",
+            description = "Deletes a team from the database by its ID."
+    )
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTeam(@PathVariable Integer id){
         service.deleteTeam(id);
