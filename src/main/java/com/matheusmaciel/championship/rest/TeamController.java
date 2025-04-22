@@ -22,21 +22,33 @@ public class TeamController {
         if(service.teamList().isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(service.teamList());
+        return ResponseEntity.ok().body(service.teamList());
     }
 
-    @GetMapping
-    public ResponseEntity<Team> getTeamById(@RequestParam Integer id){
+    @GetMapping("/{id}")
+    public ResponseEntity<Team> getTeamById(@PathVariable Integer id){
         if(service.teamById(id) == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(service.teamById(id));
+        return ResponseEntity.ok().body(service.teamById(id));
     }
 
     @PostMapping("/register")
     public ResponseEntity<Team> registerTeam(@RequestBody Team team){
         service.registerTeam(team);
         return ResponseEntity.ok(team);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Team> updateTeam(@PathVariable Integer id, @RequestBody Team team){
+        Team updatedTeam = service.updateTeam(id, team);
+        return ResponseEntity.ok(updatedTeam);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteTeam(@PathVariable Integer id){
+        service.deleteTeam(id);
+        return ResponseEntity.ok().build();
     }
 
 
