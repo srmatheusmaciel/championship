@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Atlético Mineiro",
+    "code": "CAM",
+    "state": "MG",
+    "stadium": "Arena MRV"
+  },
+  {
+    "name": "Bahia",
+    "code": "BAH",
+    "state": "BA",
+    "stadium": "Itaipava Arena Fonte Nova"
+  },
+  {
+    "name": "Botafogo",
+    "code": "BOT",
+    "state": "RJ",
+    "stadium": "Estádio Nilton Santos"
+  },
+  {
+    "name": "Red Bull Bragantino",
+    "code": "RBB",
+    "state": "SP",
+    "stadium": "Estádio Nabi Abi Chedid"
+  },
+  {
+    "name": "Ceará",
+    "code": "CEA",
+    "state": "CE",
+    "stadium": "Arena Castelão"
+  },
+  {
+    "name": "Corinthians",
+    "code": "COR",
+    "state": "SP",
+    "stadium": "Neo Química Arena"
+  },
+  {
+    "name": "Cruzeiro",
+    "code": "CRU",
+    "state": "MG",
+    "stadium": "Mineirão"
+  },
+  {
+    "name": "Flamengo",
+    "code": "FLA",
+    "state": "RJ",
+    "stadium": "Maracanã"
+  },
+  {
+    "name": "Fluminense",
+    "code": "FLU",
+    "state": "RJ",
+    "stadium": "Maracanã"
+  },
+  {
+    "name": "Fortaleza",
+    "code": "FOR",
+    "state": "CE",
+    "stadium": "Arena Castelão"
+  },
+  {
+    "name": "Grêmio",
+    "code": "GRE",
+    "state": "RS",
+    "stadium": "Arena do Grêmio"
+  },
+  {
+    "name": "Internacional",
+    "code": "INT",
+    "state": "RS",
+    "stadium": "Beira-Rio"
+  },
+  {
+    "name": "Juventude",
+    "code": "JUV",
+    "state": "RS",
+    "stadium": "Estádio Alfredo Jaconi"
+  },
+  {
+    "name": "Mirassol",
+    "code": "MIR",
+    "state": "SP",
+    "stadium": "Estádio José Maria de Campos Maia"
+  },
+  {
+    "name": "Palmeiras",
+    "code": "PAL",
+    "state": "SP",
+    "stadium": "Allianz Parque"
+  },
+  {
+    "name": "Santos",
+    "code": "SAN",
+    "state": "SP",
+    "stadium": "Vila Belmiro"
+  },
+  {
+    "name": "São Paulo",
+    "code": "SAO",
+    "state": "SP",
+    "stadium": "MorumBIS"
+  },
+  {
+    "name": "Sport Recife",
+    "code": "SPO",
+    "state": "PE",
+    "stadium": "Ilha do Retiro"
+  },
+  {
+    "name": "Vasco da Gama",
+    "code": "VAS",
+    "state": "RJ",
+    "stadium": "São Januário"
+  },
+  {
+    "name": "Vitória",
+    "code": "VIT",
+    "state": "BA",
+    "stadium": "Barradão"
+  }
+]

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TeamService {
@@ -21,11 +22,18 @@ public class TeamService {
     }
 
 
-    public TeamDTO registerTeam(TeamDTO teamDTO) {
-        Team teamEntity = teamDTO.toEntity();
-        teamEntity = repository.save(teamEntity);
-        return TeamDTO.fromEntity(teamEntity);
+    public List<TeamDTO> registerTeam(List<TeamDTO> teamDTOs) {
+        List<Team> teams = teamDTOs.stream()
+                .map(TeamDTO::toEntity)
+                .collect(Collectors.toList());
+        List<Team> savedTeams = repository.saveAll(teams);
+
+
+        return savedTeams.stream()
+                .map(TeamDTO::fromEntity)
+                .collect(Collectors.toList());
     }
+
 
 
     public List<TeamDTO> teamList() {
@@ -59,6 +67,11 @@ public class TeamService {
 
         repository.delete(team);
     }
+
+    public List<Team> findAllEntities() {
+        return repository.findAll();
+    }
+
 
 
 }

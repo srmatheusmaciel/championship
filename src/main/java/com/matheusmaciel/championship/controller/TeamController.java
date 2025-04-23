@@ -1,4 +1,4 @@
-package com.matheusmaciel.championship.rest;
+package com.matheusmaciel.championship.controller;
 
 import com.matheusmaciel.championship.dto.TeamDTO;
 import com.matheusmaciel.championship.service.TeamService;
@@ -6,12 +6,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/teams")
+@Validated
 public class TeamController {
 
     private final TeamService service;
@@ -49,8 +51,8 @@ public class TeamController {
             description = "Adds a new team to the database with name, code, and state."
     )
     @PostMapping("/register")
-    public ResponseEntity<String> registerTeam(@Valid @RequestBody TeamDTO teamDTO){
-        service.registerTeam(teamDTO);
+    public ResponseEntity<String> registerTeam(@Valid @RequestBody List<TeamDTO> teamDTOs){
+        service.registerTeam(teamDTOs);
         return ResponseEntity.status(HttpStatus.CREATED).body("Team registered successfully");
     }
 
