@@ -1,14 +1,16 @@
 package com.matheusmaciel.championship.controller;
 
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
 import com.matheusmaciel.championship.dto.MatchDTO;
+import com.matheusmaciel.championship.dto.MatchFinishedDTO;
 import com.matheusmaciel.championship.dto.MatchGenerationDTO;
-import com.matheusmaciel.championship.dto.TeamDTO;
 import com.matheusmaciel.championship.service.MatchService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.foreign.Linker.Option;
 import java.util.List;
 
 @RestController
@@ -16,6 +18,7 @@ import java.util.List;
 public class MatchController {
 
     private final MatchService service;
+    
 
     public MatchController(MatchService service) {
         this.service = service;
@@ -34,4 +37,23 @@ public class MatchController {
         }
         return ResponseEntity.ok().body(service.findAll());
     }
+
+    @PostMapping("/finish/{id}")
+    public ResponseEntity<MatchDTO> finishMatch(@PathVariable Integer id, @RequestBody MatchFinishedDTO matchFinishedDTO) {
+        service.finishMatch(id, matchFinishedDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MatchDTO> findMatchById(@PathVariable Integer id) {
+        return ResponseEntity.ok().body(service.findById(id));
+    }
+
+    @PutMapping("/update-match/{id}")
+    public ResponseEntity<Void> updateMatchResult(@PathVariable Integer id, @RequestBody @Valid MatchFinishedDTO matchFinishedDTO) {
+    service.finishMatch(id, matchFinishedDTO);
+    return ResponseEntity.noContent().build();
+}
+
+
 }

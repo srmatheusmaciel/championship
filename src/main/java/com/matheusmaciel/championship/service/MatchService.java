@@ -1,20 +1,22 @@
 package com.matheusmaciel.championship.service;
 
 import com.matheusmaciel.championship.dto.MatchDTO;
-import com.matheusmaciel.championship.dto.TeamDTO;
+import com.matheusmaciel.championship.dto.MatchFinishedDTO;
+import com.matheusmaciel.championship.dto.StandingDTO;
 import com.matheusmaciel.championship.entity.Match;
 import com.matheusmaciel.championship.entity.Team;
 import com.matheusmaciel.championship.exception.MatchNotFoundException;
 import com.matheusmaciel.championship.repository.MatchRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,7 +107,7 @@ public class MatchService {
         return MatchDTO.fromEntity(match);
     }
 
-    public void finishMatch(Integer id, MatchDTO matchDTO) {
+    public void finishMatch(Integer id, MatchFinishedDTO matchFinishedDTO) {
         Match match = matchRepository.findById(id)
                 .orElseThrow(() -> new MatchNotFoundException(id));
 
@@ -113,13 +115,42 @@ public class MatchService {
             throw new IllegalStateException("Match already finished");
         }
 
-        match.setGoalsTeam1(matchDTO.getGoalsTeam1());
-        match.setGoalsTeam2(matchDTO.getGoalsTeam2());
+        match.setGoalsTeam1(matchFinishedDTO.getGoalsTeam1());
+        match.setGoalsTeam2(matchFinishedDTO.getGoalsTeam2());
         match.setFinished(true);
-        match.setAttendance(matchDTO.getAttendance());
+        match.setAttendance(matchFinishedDTO.getAttendance());
 
 
         matchRepository.save(match);
     }
+
+    public List<StandingDTO> calculateStandings() {
+        List<Match> matches = matchRepository.findAllByFinishedTrue();
+    
+        Map<Team, StandingDTO> standings = new HashMap<>();
+    
+        for (Match match : matches) {
+            Team team1 = match.getTeam1();
+            Team team2 = match.getTeam2();
+            int goals1 = match.getGoalsTeam1();
+            int goals2 = match.getGoalsTeam2();
+    
+            standings.putIfAbsent(team1, new StandingDTO(team1.getId(), team1.getName()));
+            standings.putIfAbsent(team2, new StandingDTO(team2.getId(), team2.getName()));
+    
+            StandingDTO standing1 = standings.get(team1);
+            StandingDTO standing2 = standings.get(team2);
+    
+            standing1.addMatch(goals1, goals2);
+            standing2.addMatch(goals2, goals1);
+        }
+    
+        return standings.values().stream()
+                .sorted(Comparator.comparingInt(StandingDTO::getPoints).reversed()
+                        .thenComparingInt(StandingDTO::getGoalDifference).reversed()
+                        .thenComparingInt(StandingDTO::getGoalsFor).reversed())
+                .collect(Collectors.toList());
+    }
+    
 
 }
