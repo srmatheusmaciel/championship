@@ -1,7 +1,7 @@
 package com.matheusmaciel.championship.controller;
 
 
-import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
+
 import com.matheusmaciel.championship.dto.MatchDTO;
 import com.matheusmaciel.championship.dto.MatchFinishedDTO;
 import com.matheusmaciel.championship.dto.MatchGenerationDTO;
@@ -10,7 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.foreign.Linker.Option;
+
 import java.util.List;
 
 @RestController
