@@ -4,10 +4,7 @@ import com.matheusmaciel.championship.dto.TeamDTO;
 import com.matheusmaciel.championship.entity.Team;
 import com.matheusmaciel.championship.exception.TeamNotFoundException;
 import com.matheusmaciel.championship.repository.TeamRepository;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
