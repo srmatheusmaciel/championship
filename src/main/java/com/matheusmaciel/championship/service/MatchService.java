@@ -151,6 +151,13 @@ public class MatchService {
                         .thenComparingInt(StandingDTO::getGoalsFor).reversed())
                 .collect(Collectors.toList());
     }
+
+    public List<MatchDTO> getMatchesByTeamName(String name) {
+        return matchRepository.findByTeam1_NameIgnoreCaseOrTeam2_NameIgnoreCase(name, name)
+                .stream()
+                .map(MatchDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
     
 
 }

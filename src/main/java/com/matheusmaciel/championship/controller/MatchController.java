@@ -53,7 +53,12 @@ public class MatchController {
     public ResponseEntity<Void> updateMatchResult(@PathVariable Integer id, @RequestBody @Valid MatchFinishedDTO matchFinishedDTO) {
     service.finishMatch(id, matchFinishedDTO);
     return ResponseEntity.noContent().build();
-}
+    }
+
+    @GetMapping("/by-team")
+    public List<MatchDTO> getMatchesByTeam(@RequestParam String name) {
+        return service.getMatchesByTeamName(name);
+    }
 
 
 }

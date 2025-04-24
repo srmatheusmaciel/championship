@@ -12,5 +12,6 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
   
 
   List<Match> findAllByFinishedTrue();
+  List<Match> findByTeam1_NameIgnoreCaseOrTeam2_NameIgnoreCase(String team1, String team2);
 
 }
