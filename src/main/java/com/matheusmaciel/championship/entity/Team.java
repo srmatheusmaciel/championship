@@ -25,7 +25,7 @@ public class Team {
     @Column(length = 4, nullable = false)
     private String code;
 
-    @Column(length = 2)
+    @Column(length = 3)
     private String state;
 
     @Column(length = 50)

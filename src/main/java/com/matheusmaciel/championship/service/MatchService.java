@@ -11,12 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +39,8 @@ public class MatchService {
 
         LocalDateTime matchDate = firstRoundDate;
 
+        Set<LocalDate> invalidDatesSet = new HashSet<>(invalidDates);
+
         for(int round = 0; round < total - 1; round++) {
             for(int i = 0; i < half; i++) {
                 Team team1;
@@ -58,6 +55,10 @@ public class MatchService {
 
                 }
 
+                while (invalidDatesSet.contains(matchDate.toLocalDate())) {
+                    matchDate = matchDate.plusDays(1);
+                }
+
                 matches.add(createMatch(matchDate, round + 1, team1, team2));
                 matchDate = matchDate.plusDays(7);
 
@@ -65,7 +66,10 @@ public class MatchService {
             Collections.rotate(teamList.subList(1, teamList.size()), 1);
         }
 
-        matchRepository.saveAll(matches);
+        if(!matches.isEmpty()) {
+            matchRepository.saveAll(matches);
+        }
+
 
         List<Match> returnMatches = matches.stream()
                 .map(match -> createMatch(
@@ -75,9 +79,9 @@ public class MatchService {
                         match.getTeam1()
                 )).collect(Collectors.toList());
 
-        matchRepository.saveAll(returnMatches);
-
-
+        if(!returnMatches.isEmpty()) {
+            matchRepository.saveAll(returnMatches);
+        }
 
     }
 
