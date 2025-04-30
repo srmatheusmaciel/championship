@@ -1,9 +1,11 @@
 package com.matheusmaciel.championship.controller;
 
 import com.matheusmaciel.championship.dto.MatchDTO;
+import com.matheusmaciel.championship.dto.MatchFinishedDTO;
 import com.matheusmaciel.championship.dto.MatchGenerationDTO;
 import com.matheusmaciel.championship.dto.TeamDTO;
 import com.matheusmaciel.championship.entity.Team;
+import com.matheusmaciel.championship.exception.MatchNotFoundException;
 import com.matheusmaciel.championship.service.MatchService;
 import com.matheusmaciel.championship.service.TeamService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +21,8 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 class MatchControllerTest {
@@ -109,6 +113,41 @@ class MatchControllerTest {
         assertThat(response.getStatusCodeValue()).isEqualTo(404);
         assertThat(response.getBody()).isNull();
     }
+
+    @Test
+    @DisplayName("Should call finishMatch and return ok")
+    void shouldCallFinishMatchAndReturnOk() {
+
+        Integer matchId = 1;
+
+        MatchFinishedDTO dto = new MatchFinishedDTO();
+        dto.setGoalsTeam1(2);
+        dto.setGoalsTeam2(1);
+        dto.setAttendance(150);
+
+    	ResponseEntity<MatchDTO> response = controller.finishMatch(matchId, dto);
+
+    	verify(service, times(1)).finishMatch(eq(matchId), eq(dto));
+
+    	assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody()).isNull();
+    }
+
+    @Test
+    @DisplayName("Should throw MatchNotFoundException when match id does not exist")
+    void shouldThrowMatchNotFoundExceptionWhenMatchIdDoesNotExist() {
+        Integer nonExistentMatchId = 999;
+        MatchFinishedDTO dto = new MatchFinishedDTO(1, 2, 100);
+
+        doThrow(new MatchNotFoundException(nonExistentMatchId))
+                .when(service).finishMatch(nonExistentMatchId, dto);
+
+        org.junit.jupiter.api.Assertions.assertThrows(
+                MatchNotFoundException.class,
+                () -> controller.finishMatch(nonExistentMatchId, dto)
+        );
+    }
+
 
 
 
