@@ -1,9 +1,11 @@
 package com.matheusmaciel.championship.controller;
 
 import com.matheusmaciel.championship.dto.MatchDTO;
+import com.matheusmaciel.championship.dto.MatchFinishedDTO;
 import com.matheusmaciel.championship.dto.MatchGenerationDTO;
 import com.matheusmaciel.championship.dto.TeamDTO;
 import com.matheusmaciel.championship.entity.Team;
+import com.matheusmaciel.championship.exception.MatchNotFoundException;
 import com.matheusmaciel.championship.service.MatchService;
 import com.matheusmaciel.championship.service.TeamService;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,9 +19,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 class MatchControllerTest {
 
@@ -110,6 +116,65 @@ class MatchControllerTest {
         assertThat(response.getBody()).isNull();
     }
 
+    @Test
+    @DisplayName("Should return 200 ok and match when id exists")
+    void shouldReturnOkAndMatchWhenIdExists() {
+
+        Integer matchId = 1;
+
+        MatchDTO matchDTO = new MatchDTO();
+        matchDTO.setId(matchId);
+        matchDTO.setTeam1(TeamDTO.fromEntity(teamList.get(0)));
+        matchDTO.setTeam2(TeamDTO.fromEntity(teamList.get(1)));
+        matchDTO.setGoalsTeam1(0);
+        matchDTO.setGoalsTeam2(2);
+        matchDTO.setAttendance(10000);
+        matchDTO.setDate(LocalDateTime.now());
+        matchDTO.setRound(1);
+        matchDTO.setFinished(false);
+
+        when(service.findById(matchId)).thenReturn(matchDTO);
+
+        ResponseEntity<MatchDTO> response = controller.findMatchById(matchId);
+
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody()).isEqualTo(matchDTO);
+
+        verify(service, times(1)).findById(matchId);
+
+
+    }
+
+    @Test
+    @DisplayName("Should throw MatchNotFoundException when id does not exist")
+    void shouldThrowMatchNotFoundExceptionWhenIdDoesNotExist() {
+        Integer nonExistingId = 999;
+
+        when(service.findById(nonExistingId)).thenThrow(new MatchNotFoundException(nonExistingId));
+
+        assertThrows(
+                MatchNotFoundException.class,
+                () -> controller.findMatchById(nonExistingId)
+        );
+
+        verify(service, times(1)).findById(nonExistingId);
+    }
+
+    @Test
+    @DisplayName("Should call finishMatch and return no content")
+    void shouldCallFinishMatchAndReturnNoContent() {
+        Integer matchId = 1;
+
+        MatchFinishedDTO matchFinishedDTO = new MatchFinishedDTO(2,1,5000);
+
+        ResponseEntity<Void> response = controller.updateMatchResult(matchId,
+                                                                    matchFinishedDTO);
+
+        verify(service, times(1)).finishMatch(eq(matchId),eq(matchFinishedDTO));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        assertThat(response.getBody()).isNull();
+
+    }
 
 
 }
